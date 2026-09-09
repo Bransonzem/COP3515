@@ -11,6 +11,33 @@ into this log or vice versa.
 
 ---
 
+## 2026-09-08 (continued)
+
+- Added input validation to `main.c`, per user request: "if it ask for a number
+  dont let it use letters, and vise versa. Make realistic and logical
+  restrictions." Flagged first that full validation both ways isn't equally
+  possible under Part 1's constraints: numeric fields can be checked with a
+  single `if` (via `scanf`'s return value plus a one-character trailing-garbage
+  peek), but rejecting embedded digits in the Student Name field would require
+  scanning an arbitrary-length string character by character — a loop or a
+  function, both explicitly out of scope this week. User's follow-up ("do
+  exactly what the instructions say, but if you can improve the code then do
+  it") resolved this: stayed within the no-loops/no-functions constraint.
+  Implemented: Student ID rejects non-numeric input, trailing garbage after the
+  number (e.g. `"123abc"`), and negative values; Current GPA rejects
+  non-numeric input, trailing garbage, and values outside 0.0-4.0 (matches the
+  PDF's own example scale); Student Name rejects a blank entry (no loop
+  needed — just checks the first character). Digit-rejection in the name field
+  is intentionally NOT implemented, and is documented as such in
+  `CHANGELOG.md`, since it cannot be done without breaking the stated
+  constraint. All error paths print a clear message and exit(1) rather than
+  looping to re-prompt (retry would also require a loop). Recompiled clean
+  with `-Wall -Wextra` and re-verified: all 3 required test cases still pass,
+  plus adversarial tests for every new rejection path (letters in ID/GPA,
+  trailing garbage in both, negative ID, blank name, GPA out of range,
+  boundary GPA = 0.0) all behaved correctly. Updated the `Part 1/Project 1
+  Part 1/main.c` snapshot to match.
+
 ## 2026-09-08
 
 - Received the CCR-001 (Project 1 - Part 1) PDF spec: Student Information

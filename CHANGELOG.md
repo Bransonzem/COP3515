@@ -24,3 +24,14 @@ immediately after each prompt `printf`.
 
 **Tests:** All three PDF-required cases pass exactly (Alice Johnson 3.84 / Michael
 Brown 2.91 / Christopher Williams 4.00). Compiles clean with `-Wall -Wextra`.
+
+**Input validation added (still Part 1, refinement):** Student ID and Current GPA
+are now rejected (clear error message, program exits) if they contain letters or
+trailing garbage (e.g. `"abc"`, `"123abc"`), if Student ID is negative, or if GPA
+falls outside 0.0–4.0. Student Name is rejected if left blank. All checks use a
+single `if` per condition — no loops or functions, since Part 1's spec explicitly
+puts both out of scope this week. Rejecting digits embedded in the Student Name
+(e.g. `"Al1ce"`) would require scanning an arbitrary-length string character by
+character, which needs a loop or function — not possible within this week's
+constraints, so that specific check is intentionally not implemented. Re-verified
+all three required test cases still pass after adding these checks.
