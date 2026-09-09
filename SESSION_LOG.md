@@ -11,6 +11,48 @@ into this log or vice versa.
 
 ---
 
+## 2026-09-09 (continued)
+
+- Read Part 2's PDF spec in full and began implementation, per user request
+  to "go to part 2 and do everything it says, like how we did part 1."
+- Flagged and resolved a real conflict before writing code: Part 2's own
+  worked example output omits the `Programmer:` line, but Part 2's
+  Acceptance Criteria requires all Part 1 functionality (which included
+  that line) to keep working. User chose to keep the line, prioritizing
+  the Acceptance Criteria over the example.
+- Mid-session correction from user: "STOP SAYING CCR1 THATS DIFFERENT" —
+  caught myself using "CCR-001" terminology while explaining the
+  Programmer-line conflict. Reinforced: this project is "Part N" only,
+  never "CCR," in every communication, not just written artifacts.
+- Implemented Part 2 in `main.c`: version bumped to 2.0; added
+  `courseGrades[5]` (array, newly permitted this week) sized via
+  `enum { NUM_COURSES = 5 }` (enums also newly permitted); five grade
+  prompts each validated like Part 1's numeric fields (reject letters,
+  trailing garbage, out-of-range — valid range 0-100); average (2
+  decimals)/highest/lowest computed via straight-line arithmetic and
+  individual `if` comparisons, no loop or function (both still out of
+  scope this week per the PDF).
+- Caught and fixed my own structural bug before testing: initially
+  printed a "Course Grades" header both before the input prompts AND
+  again in the final report — the PDF's expected output only shows it
+  once, as the report header after all input is collected (same pattern
+  as "Student Summary"). Removed the premature one.
+- Compiled clean with `-Wall -Wextra`. Verified all three required
+  regression test cases pass exactly: Alice Johnson (avg 91.60, high
+  100, low 84), Michael Brown (avg 79.00, high 91, low 68), Christopher
+  Williams (avg 100.00, high 100, low 100). Adversarially tested letters/
+  trailing-garbage/out-of-range on a course grade, boundary grades of
+  exactly 0 and 100 (avg correctly 50.00), and re-ran Part 1's own
+  invalid-ID/blank-name rejections to confirm no regression.
+- Drafted answers to the PDF's required "Questions for the Customer"
+  section (grades are whole numbers 0-100; no fractional grades; invalid
+  grade prints an error and exits rather than re-prompting; courses have
+  no names; average rounds to 2 decimals; a tied highest/lowest is shown
+  once with no course identification, since that would be a "searching"
+  feature and is out of scope; more than five courses not addressed this
+  week) — full reasoning recorded in `CHANGELOG.md`'s Part 2 entry.
+- Updated the `Part 2/Project 1 Part 2/main.c` snapshot to match.
+
 ## 2026-09-09
 
 - Re-verified Part 1 was submission-ready by checking `main.c` and the
