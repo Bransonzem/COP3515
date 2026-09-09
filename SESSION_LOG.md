@@ -52,6 +52,14 @@ into this log or vice versa.
   feature and is out of scope; more than five courses not addressed this
   week) — full reasoning recorded in `CHANGELOG.md`'s Part 2 entry.
 - Updated the `Part 2/Project 1 Part 2/main.c` snapshot to match.
+- Built the Part 2 submission evidence PDF the same way as Part 1's (real
+  `pty`-captured transcripts, not simulated text): 5 pages — title +
+  regression testing summary, full answers to the PDF's "Questions for
+  the Customer" section (required in Part 2's submission, unlike Part
+  1), then one screenshot per required test case (each showing the full
+  end-to-end run: Part 1 fields + Part 2 grades together), all marked
+  PASS. Saved at `Part 2/Project 1 Part 2/Test Evidence, Bugs, and
+  Customer Questions.pdf`.
 
 ## 2026-09-09
 
