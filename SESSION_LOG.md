@@ -11,6 +11,22 @@ into this log or vice versa.
 
 ---
 
+## 2026-09-09 (continued, Obsidian setup)
+
+- User wants an Obsidian vault tied to this project for notes. Confirmed
+  Obsidian was already installed (`/Applications/Obsidian.app`, since
+  Aug 12). Created `Notes/` inside the project folder as the intended
+  vault root, with starter notes: `SIMS Project.md` (index, links to
+  CHANGELOG.md/SESSION_LOG.md/main.c), `Part 1.md`, and `Part 2.md`
+  (each summarizing that part's spec/code/evidence links, judgment
+  calls, and bugs). Added `Notes/.obsidian/` to `.gitignore` so
+  Obsidian's own app config isn't tracked, while the `.md` notes
+  themselves are regular tracked files like CHANGELOG.md/SESSION_LOG.md.
+  Launched Obsidian via `open -a Obsidian`; user still needs to use
+  "Open folder as vault" in the app and select this `Notes/` folder
+  (not scriptable from the CLI without editing Obsidian's own internal
+  config, which wasn't worth the risk for a one-time setup step).
+
 ## 2026-09-09 (continued, after Part 2 submission)
 
 - User reported: entering an invalid course grade correctly showed an
