@@ -54,12 +54,15 @@ into this log or vice versa.
 - Created `Part 2/` subfolder and moved `Project 1 - Part 2.pdf` into it
   (organizational only — Part 2 requirements have not been read or
   implemented yet).
-- Added a minimal title-label file to each part folder
-  (`Part 1/Project 1 - Part 1.md`, `Part 2/Project 1 - Part 2.md`).
-  Clarified with user: each `Part N/` folder is meant to hold that part's
-  full submission package (code snapshot + spec PDF, etc.), not just the
-  spec. Copied the current (finished) `main.c` into `Part 1/main.c` as a
-  point-in-time snapshot of Part 1's submitted code — this copy will NOT
-  auto-update when the root `main.c` changes for Part 2 and beyond; the
-  root `main.c` remains the live, cumulative file. `Part 2/` has no code
-  copy yet since Part 2 hasn't been implemented.
+- Added a minimal title-label file to each part folder (superseded below).
+- Correction: the ".md label file" request actually meant a **subfolder**
+  named `Project 1 Part N`, not a text file. User manually reorganized
+  `Part 1/` to: `Part 1/Project 1 - Part 1.pdf` (spec) plus
+  `Part 1/Project 1 Part 1/main.c` (finished Part 1 code snapshot),
+  removing the earlier `.md` label file and the flat `main.c` copy.
+  Mirrored the same structure for `Part 2/`: created
+  `Part 2/Project 1 Part 2/main.c` as a copy of the current main.c —
+  this is just Part 2's *starting point* to build from, not finished
+  Part 2 code. Neither of these `Project 1 Part N/main.c` snapshot
+  copies auto-updates when the root `main.c` (the live, cumulative file)
+  changes — they must be refreshed manually when a part is finalized.
