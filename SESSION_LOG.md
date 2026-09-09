@@ -55,6 +55,18 @@ into this log or vice versa.
   (organizational only — Part 2 requirements have not been read or
   implemented yet).
 - Added a minimal title-label file to each part folder (superseded below).
+- Built the Part 1 submission evidence PDF per the PDF's "Submission
+  Requirements"/"Testing Requirements" sections: captured real terminal
+  transcripts for all 3 required test cases by running the compiled
+  `sims` binary under a Python `pty` (not simulated/typed-up text),
+  rendered each into a dark terminal-style screenshot, and assembled a
+  4-page PDF (title + bug writeup, then one screenshot per test case,
+  each marked PASS) at
+  `Part 1/Project 1 Part 1/Test Evidence and Bugs.pdf`. Bug writeup
+  describes the stdout-buffering/fflush fix from earlier this session.
+  Scripts used to generate this live only in the session scratchpad, not
+  the project repo (not needed for future parts — Part 2's evidence PDF
+  will be built fresh from Part 2's own test cases).
 - Correction: the ".md label file" request actually meant a **subfolder**
   named `Project 1 Part N`, not a text file. User manually reorganized
   `Part 1/` to: `Part 1/Project 1 - Part 1.pdf` (spec) plus
