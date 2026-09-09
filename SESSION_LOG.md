@@ -48,3 +48,6 @@ into this log or vice versa.
   `/Users/bransonzemaitis/Desktop/Advanced Program/Project/main.c` (note:
   `Project`, not `Project 1` — an earlier, now-deleted attempt lived at
   the latter path before the real Part 1 PDF was available).
+- Created `Part 1/` subfolder and moved `Project 1 - Part 1.pdf` into it.
+  `Project 1 - Part 2.pdf` (already present in the project root) left
+  unfiled until Part 2 work begins.
