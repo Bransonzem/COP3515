@@ -11,6 +11,26 @@ into this log or vice versa.
 
 ---
 
+## 2026-09-09
+
+- Re-verified Part 1 was submission-ready by checking `main.c` and the
+  evidence PDF against the actual PDF's own "Acceptance Criteria" (all
+  10 checkboxes) and "Submission Requirements" sections before zipping
+  anything, per the user's question "is everything ready to submit
+  before i create the zip?" Confirmed: compiles clean with
+  `-Wall -Wextra`, `Part 1/Project 1 Part 1/main.c` snapshot byte-matches
+  the root `main.c`, and `Test Evidence and Bugs.pdf` already covers the
+  3 required test cases + bugs writeup. Flagged (not yet acted on) that
+  the evidence PDF doesn't separately demonstrate the input-validation
+  refinement added after it was built, since that wasn't a "bug" and
+  wasn't one of the 3 required test cases.
+- Built the final submission ZIP at `Part 1/Project 1 Part 1/Project 1 -
+  Part 1 Submission.zip`, flat (no subfolders) containing exactly
+  `main.c` and `Test Evidence and Bugs.pdf`, per the PDF's stated
+  Submission Requirements. Added `*.zip` to `.gitignore` — the zip is a
+  build artifact assembled from files already tracked in git, so it's
+  not committed itself, same treatment as the compiled `sims` binary.
+
 ## 2026-09-08 (continued)
 
 - Added input validation to `main.c`, per user request: "if it ask for a number

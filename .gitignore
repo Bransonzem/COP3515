@@ -1,3 +1,4 @@
 sims
 *.o
 .DS_Store
+*.zip
