@@ -11,6 +11,24 @@ into this log or vice versa.
 
 ---
 
+## 2026-09-09 (continued, after Part 2 submission)
+
+- User reported: entering an invalid course grade correctly showed an
+  error but "just stopped" (program exits rather than re-prompting).
+  Explained this is by design, not a bug — re-prompting needs a loop,
+  which Part 2's spec puts out of scope. Asked whether to keep the
+  exit-on-invalid behavior or add a flagged loop deviation (same pattern
+  used elsewhere in the class's CCR series when retry is otherwise
+  impossible). User initially answered "keep as-is," then immediately
+  followed up "i need to be able to try again" (before any code was
+  touched), then — after I'd started planning a retry-loop
+  implementation — sent "Keep all teh contraints listed in the pdf,"
+  which reversed that again. Resolved: no code change. "Try again" was
+  clarified to mean simply re-running the compiled `./sims` binary from
+  the terminal after fixing bad input, not an in-program retry loop.
+  Part 2's code, evidence PDF, and submission ZIP are unchanged and
+  still accurate as originally built.
+
 ## 2026-09-09 (continued)
 
 - Read Part 2's PDF spec in full and began implementation, per user request
