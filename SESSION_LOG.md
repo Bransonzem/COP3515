@@ -51,3 +51,6 @@ into this log or vice versa.
 - Created `Part 1/` subfolder and moved `Project 1 - Part 1.pdf` into it.
   `Project 1 - Part 2.pdf` (already present in the project root) left
   unfiled until Part 2 work begins.
+- Created `Part 2/` subfolder and moved `Project 1 - Part 2.pdf` into it
+  (organizational only — Part 2 requirements have not been read or
+  implemented yet).
