@@ -1,0 +1,3 @@
+sims
+*.o
+.DS_Store
