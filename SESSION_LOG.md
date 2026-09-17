@@ -29,6 +29,12 @@ into this log or vice versa.
 
 ## 2026-09-09 (continued, after Part 2 submission)
 
+> **Confirmed 2026-09-16:** this heading is accurate. Branson confirmed that
+> Part 1 and Part 2 were both submitted to Canvas. An earlier reading of this
+> project treated the absence of a local `Project 1 Part 2.zip` as evidence
+> that Part 2 had never been submitted — that inference was wrong. The local
+> folder is not a record of what went to Canvas.
+
 - User reported: entering an invalid course grade correctly showed an
   error but "just stopped" (program exits rather than re-prompting).
   Explained this is by design, not a bug — re-prompting needs a loop,
@@ -209,3 +215,265 @@ into this log or vice versa.
   Part 2 code. Neither of these `Project 1 Part N/main.c` snapshot
   copies auto-updates when the root `main.c` (the live, cumulative file)
   changes — they must be refreshed manually when a part is finalized.
+
+## 2026-09-16 (Part 3 — academic standing)
+
+- User supplied the Part 3 spec PDF (`Project 1 - Part 3.pdf`, CCR-003).
+  Filed per the established process: canonical copy at
+  `Part 3/Project 1 - Part 3.pdf`, quick-glance copy at
+  `00 Instructions/Part 3.pdf`. Created `Part 3/Project 1 Part 3/` as the
+  (currently empty) submission folder.
+- **Deadline discrepancy flagged, unresolved.** User believed Part 3 was due
+  Thu Sep 17. The spec header says "Due Date: Beginning of Lesson 8." Using
+  the lesson-to-date mapping already confirmed in this project's `CLAUDE.md`
+  (Tue/Thu class; Part 1 = Lesson 4 = Thu Sep 10, Part 2 = Lesson 6 = Thu
+  Sep 17), Lesson 8 falls on **Thu Sep 24**, giving a full extra week. Part 2
+  is what is actually due Sep 17. User needs to confirm on Canvas — this was
+  not verified here.
+- **Stale root `main.c` corrected before any Part 3 work.** Root `main.c`
+  (Sep 9, 00:41) and the Part 2 snapshot (Sep 9, 20:58) had drifted. Both
+  178 lines; the only difference was the Student Summary block position. The
+  root still printed it *before* the course grade prompts; the snapshot had
+  the Part 2 fix moving it below Course 5. The snapshot was newer and correct,
+  which is the reverse of the intended arrangement (root is supposed to be the
+  live canonical file). Copied snapshot → root, verified identical by md5.
+  Worth checking both before starting any future part.
+- Implemented Part 3 against the corrected base:
+  - `VERSION_NUMBER` "2.0" → "3.0".
+  - Reworded the existing Part 1 GPA range-check message to match the spec's
+    Example 5 exactly: `ERROR` on its own line, then `Invalid GPA entered.`,
+    then `GPA must be between 0.00 and 4.00.` The check itself was already
+    present and already sat above the classification, satisfying the spec's
+    "validate before determining standing" requirement without moving code.
+  - Added named `enum AcademicStanding` (HONORS / GOOD / PROBATION /
+    SUSPENSION).
+  - Classification via if/else-if cascade on `>=` lower bounds only. Chosen
+    over two-sided range tests because the published bands have gaps (nothing
+    covers 3.495, between 3.49 and 3.50). The cascade closes them and makes
+    band limits inclusive.
+  - Display via `switch` on the enum, printing `Academic Standing :` directly
+    under `Current GPA`, matching the existing column alignment.
+  - No functions, no loops, no files — all still out of scope this part.
+- Heavily commented the new code at the user's request (he is learning C).
+  The comments explain the enum's purpose, the band-gap reasoning, and
+  specifically why the switch tests the enum rather than the float: a C switch
+  requires an integer expression, so `switch (currentGPA)` does not compile.
+  The if/else does the range comparison a switch cannot; the switch does the
+  label selection.
+- Compiled `gcc -Wall -Wextra -std=c11` — zero warnings.
+- Ran all six required standing tests (3.95 / 3.20 / 1.75 / 0.60 / -0.50 /
+  4.25) — all pass, with both invalid GPAs printing the exact three-line
+  Example 5 message and exiting before course grades are requested.
+- Ran all three Part 2 regression cases (Alice Johnson, Michael Brown,
+  Christopher Williams) — all pass exactly, averages and high/low unchanged.
+- Additionally spot-checked band boundaries and the gap value (4.00, 3.50,
+  3.49, 3.495, 2.00, 1.99, 1.00, 0.99, 0.00) — every value classifies into
+  exactly one category, no gaps.
+- Created `Notes/Part 3.md` (spec summary, standing bands, required tests,
+  build order, assumptions to log, both gotchas) and added it to the
+  `SIMS Project.md` index.
+- **Deliberately NOT done, left to the user:** answers to the Questions for
+  the Customer, the assumptions write-up, test evidence screenshots, the
+  evidence PDF, the Part 3 `main.c` snapshot, the submission ZIP, and the git
+  commit. Per the spec's AI usage policy the user is responsible for
+  understanding and testing all submitted code, and the screenshots must be
+  his own.
+
+## 2026-09-16 (continued — Part 3 deliverable completed)
+
+- **Deadline resolved.** Branson confirmed Part 3 is due **Thu Sep 17**, not
+  Sep 24. The spec's "Beginning of Lesson 8" label therefore does not match the
+  lesson-to-date map recorded in the project `CLAUDE.md`. Updated `CLAUDE.md`
+  with a warning block: the map is wrong, every future part deadline was being
+  derived from it, and the real lesson schedule needs pulling from Canvas.
+  Noted the corroborating signal that the syllabus puts "Review for Quiz #1" at
+  Lesson 8 while Branson's quiz is Sep 22, which the current map cannot explain.
+- **Real bug found during testing, and fixed.** Classification read the raw
+  `currentGPA` while the report printed `%.2f` of it. Near a band edge the two
+  disagreed: `1.999` printed `Current GPA : 2.00` next to `Academic Standing :
+  Academic Probation`, which contradicts itself. Fixed by computing
+  `gpaRounded = ((int)(currentGPA * 100.0f + 0.5f)) / 100.0f` once, then using
+  that one variable for both the if/else cascade and the `Current GPA` line, so
+  the two can never diverge. Cast technique matches the Part 2 average. Safe
+  because negatives are already rejected above. Updated the stale inline
+  comment that still referenced `currentGPA >= 2.00f`.
+- Re-verified after the fix: `1.999` and `1.995` → 2.00 / Good Standing;
+  `3.4999` and `3.495` → 3.50 / Honors; and every band boundary (4.00, 3.50,
+  3.49, 2.00, 1.99, 1.00, 0.99, 0.00) classifies consistently with what it
+  displays. Recompiled `-Wall -Wextra -std=c11`, still zero warnings.
+- **Test evidence captured for real, not retyped.** Ran the compiled binary
+  under a Python `pty` (same technique used for Part 1's evidence) so prompts
+  and typed input interleave the way they do in a real terminal. Captured all
+  nine sessions: the six required standing cases plus the three Part 2
+  regression cases. All nine pass. Both invalid-GPA runs exit with status 1
+  before any course grade prompt.
+- **Evidence PDF built** with reportlab at
+  `Part 3/Project 1 Part 3/Test Evidence, Bugs, Customer Questions and
+  Assumptions.pdf` — 15 pages, structured to match the Part 2 evidence PDF:
+  name/course/project header, intro, bug report, assumptions, the twelve
+  Questions for the Customer answered, then one page per test. Transcripts are
+  rendered as dark terminal panels and explicitly labelled as captured
+  transcripts rather than screen photographs, so nothing is presented as a
+  screenshot that is not one.
+  - Build note: a first attempt styled the transcript blocks with a paragraph
+    `backColor`, which did not paint — light text rendered on white and was
+    nearly invisible. Rewrote the block as a single-cell `Table` with a
+    `BACKGROUND` style, which paints reliably. Verified by rasterising pages
+    and viewing them.
+- **Snapshot refreshed and ZIP built.** Copied the live `main.c` into
+  `Part 3/Project 1 Part 3/` and verified byte-identical. Built
+  `Part 3/Project 1 Part 3.zip` containing only `main.c` and the evidence PDF
+  inside a `Project 1 Part 3/` wrapper folder — matching the Part 1 ZIP's
+  actual structure rather than the "flat, no subfolders" wording in
+  `CLAUDE.md`, since the Part 1 precedent is what was already submitted
+  against. Verified the archive integrity, that no compiled binary is present,
+  and that the `main.c` inside hashes identical to the live file.
+  - The `zip` CLI failed partway (sandbox permissions) and left a stray temp
+    file `Part 3/zibS99Fv`. It could not be deleted from here — permission to
+    delete was denied. **Branson should delete it manually.** It is not in the
+    archive and does not affect the submission.
+- **Deliberately NOT done:** no git commit (left to Branson), no Canvas upload,
+  and no sign-off on the evidence PDF — his name is on that document and he
+  needs to read it before it goes anywhere. Verification list recorded in
+  `Notes/Part 3.md`.
+
+## 2026-09-16 (continued — evidence PDF rebuilt to the Part 1 template)
+
+- Branson asked for the Part 3 evidence document to match **Project 1 Part 1**,
+  not Part 2 — "nice and organized with the terminal screenshots."
+- Measured the Part 1 PDF rather than eyeballing it: 612x792, margins 78pt
+  left/right, no footer and **no page numbers**. Header is "BRANSON ZEMAITIS"
+  in Calibri Light 19 at the left with "COP 3515" (Calibri Bold 11.5) and
+  "Advanced Program Design" (Calibri 10) right-aligned on the same row, then a
+  Calibri 10 subtitle line, then the document title in Calibri Light 17.
+  Section headings Calibri Light 13, body Calibri 11, inline code Consolas 10.5.
+  Test pages are heading, then a one or two line caption, then the screenshot
+  placed flush with the left text margin.
+- Extracted the three embedded screenshots from the Part 1 PDF and sampled
+  them: background RGB(12,12,12), text RGB(204,204,204), line pitch ~19px,
+  character advance ~9.27px, ~4-6px left padding, no window chrome and no
+  PowerShell prompt line — they are cropped to the program output only.
+- Wrote `term_img.py` to render the captured transcripts as terminal images
+  matching those measurements: same background and foreground colours, same
+  pitch, and a font size auto-fitted so the character advance lands on 9.23px
+  against the 9.27px target. Rendered at 3x and placed at the same 0.749
+  reduction Branson used, so the images are crisp at his physical size.
+- Rebuilt the PDF with reportlab using Carlito (metric-compatible with Calibri)
+  and DejaVu Sans Mono for Consolas. 14 pages: header/intro/bugs, assumptions,
+  the twelve customer questions, then one test per page with its terminal image.
+- Output renamed to `Project 1 Part 3 - Test Evidence.pdf`, matching the Part 1
+  naming convention. The earlier Part-2-styled PDF
+  (`Test Evidence, Bugs, Customer Questions and Assumptions.pdf`) is superseded
+  but could not be deleted (permission denied), so it still sits in the folder.
+  **It is explicitly excluded from the ZIP** — the archive is built from a
+  fixed file list, not a directory walk. Branson should delete it manually.
+- Shrank the terminal PNGs to 8-bit greyscale, which took the PDF from 1.49 MB
+  to 877 KB.
+- ZIP rebuilt and re-verified: two entries, integrity clean, no binary, the
+  superseded PDF absent, and the `main.c` inside hashing identical to the live
+  file.
+- Known cosmetic gaps vs the Part 1 document, recorded honestly in
+  `Notes/Part 3.md`: Carlito has no Light weight so the large headings are
+  slightly heavier than Calibri Light; the terminal font is DejaVu Sans Mono
+  rather than his actual Consolas/Cascadia; his captures are cropped to a
+  terminal window while these show each run in full; and his are 96 dpi screen
+  captures while these are cleanly rendered, so they look sharper than a real
+  screenshot rather than identical to one.
+
+## 2026-09-16 (continued — leftover cleanup)
+
+- Branson authorised removing the two leftovers and asked for them to go to the
+  macOS Trash, not a hard delete.
+- **Could not reach the Trash.** Four routes tried: (1) the sandbox delete
+  permission tool was denied twice; (2) `rm` returns "Operation not permitted"
+  inside the vault, though `mv` works; (3) `~/.Trash` is not reachable — only
+  `Documents` is mounted into the sandbox; (4) Finder was granted and navigated
+  to the Part 3 folder and `zibS99Fv` was successfully selected, but
+  File > Move to Trash is disabled while Finder is backgrounded, and the
+  full-screen control request was declined.
+- **Fallback used, fully reversible:** moved both files with `mv` into
+  `_TRASH ME - superseded Part 3 files/` at the Project root, with a
+  `README.txt` explaining what each one is. They are out of `Part 3/` so they
+  can no longer be confused with the real deliverable. Branson drags that one
+  folder to the Trash himself.
+- Files moved: `zibS99Fv` (stray temp archive containing the OLD evidence PDF)
+  and `Test Evidence, Bugs, Customer Questions and Assumptions.pdf` (the
+  superseded Part-2-styled draft).
+- ZIP re-verified after the move: integrity clean, two entries, `main.c` still
+  hashing identical to the live file, correct evidence PDF present, no binary.
+  `Part 3/` now holds only the spec PDF, the submission folder, the ZIP, and
+  `.DS_Store`.
+
+## 2026-09-16 (continued — records corrected, lesson map resolved)
+
+- **Lesson 07 slide deck received and read.** It resolves the deadline confusion
+  that has been running through this project. The deck is titled *"Lesson #7:
+  While, Do While, For, Break, Continue"* — loops. Its closing slides say
+  "What We Covered Today: Do While, While, For, Break, Continue", "Reading For
+  Next Class! Chapter 7: Functions", and "What We'll Be Covering Next Time:
+  Function Declarations, Arguments, Array Arguments".
+- **The syllabus topic list runs one lesson AHEAD of what is actually taught.**
+  Syllabus says Lesson 6 = loops and Lesson 7 = Functions. Reality: Lesson 7 =
+  loops (taught Wed Sep 16), Lesson 8 = Functions (Thu Sep 17). Every earlier
+  deadline inference in this project was derived from the syllabus list and was
+  therefore wrong. Confirmed anchors are now recorded in the project
+  `CLAUDE.md`; dates for Lessons 1-6 still need pulling from Canvas.
+- Note this also breaks the "class meets Tue/Thu" assumption from the Sep 9
+  Chess Moves note — Lessons 7 and 8 fall on consecutive days, Wed then Thu.
+  Do not extrapolate deadlines from that meeting pattern.
+- **Loops question settled: loops ARE in scope for Part 3.** Two independent
+  tests both pass. (1) Taught: loops were covered in Lesson 7, the class before
+  Part 3 is due, and Part 3 scopes to "features covered through Lesson 8".
+  (2) Not banned: Parts 1 and 2 both listed "Loops" under Out of Scope
+  verbatim; Part 3's Out of Scope list omits it. An earlier note in
+  `Notes/Part 3.md` called this ambiguous and recommended straight-line code —
+  that caution was based on the syllabus, which turns out not to reflect what
+  was taught. The current code uses no loops either way, so nothing changes.
+- **Functions remain FORBIDDEN for Part 3** despite being taught in Lesson 8.
+  Part 3's Out of Scope list names "Functions" verbatim. Being taught something
+  does not override an explicit ban in the assignment. These are separate
+  tests and both must pass.
+- **Submission records corrected.** Branson confirmed Part 1 and Part 2 were
+  both submitted to Canvas. Earlier notes in this project claimed neither had
+  been submitted; that claim originated from `CLAUDE.md`'s Sep 9 status block
+  and was reinforced by the absence of a local `Project 1 Part 2.zip`.
+  **Absence of a local ZIP is not evidence of non-submission** — Part 2 was
+  submitted without one ever being saved here. The Sep 9 "after Part 2
+  submission" heading above is accurate and has been annotated as confirmed.
+- Practice change recorded in `CLAUDE.md`: save the exact uploaded ZIP into each
+  part's folder so the local tree and Canvas agree.
+- **No code was changed in this session.** `main.c` is untouched and the Part 3
+  ZIP is unchanged.
+
+## 2026-09-16 (continued — Branson's own screenshots swapped in, ZIP finalised)
+
+- Mounted `~/Desktop/project p3 screenshots` and inventoried nine PNGs. Mapped
+  each to a test by capture time and by OCR-ing the contents. All nine required
+  cases present, no extras, none missing.
+- **Verified every screenshot by reading its text**, not by trusting the
+  filename: student ID, name, GPA typed, five grades, the resulting Academic
+  Standing, and the Part 2 average/highest/lowest. All nine show correct values
+  and match what the program actually produces. Both invalid-GPA captures show
+  the exact three-line error and stop before the course grade prompts. Every
+  capture ends with the shell prompt returning, so none is truncated mid-run.
+- Note: the captures come from a Linux container shell
+  (`student@0193210b33c3:/workspace$`), not PowerShell as in Parts 1 and 2. The
+  evidence PDF does not claim any particular shell, so there is no conflict,
+  but it is a visible difference from the earlier documents.
+- Rebuilt the evidence PDF with Branson's screenshots replacing the rendered
+  transcripts, keeping the spec's exact labels (Input entered / Expected output
+  / Actual output / Pass/Fail result). His captures are ~2x retina, so they are
+  placed at half their pixel size and then at the 0.749 reduction used in his
+  Part 1 document — widths land at 238-288pt, matching Part 1's 283-297pt. At
+  that scale every test still fits on one page: 14 pages, zero orphaned images.
+  The image shrink needed for the rendered version was no longer necessary.
+- Hash-traced all nine embedded images back to Branson's original files to
+  confirm no wrong or stale image was placed.
+- `main.c` UNCHANGED this session (md5 dd1e601a2cfa73566f660c37ab856a5f).
+- ZIP rebuilt from an explicit two-file list: `main.c` + the final evidence PDF
+  inside the `Project 1 Part 3/` wrapper. Re-audited by extracting to a temp
+  dir and testing the EXTRACTED files: compiles clean with `-Wall -Wextra`,
+  all six required standing cases pass, all three CCR-002 regressions pass.
+- The intermediate relabeled draft (rendered transcripts) was moved to
+  `_TRASH ME - superseded Part 3 files/` so only one evidence PDF remains in
+  the submission folder.

@@ -81,3 +81,108 @@ Christopher Williams (avg 100.00, high 100, low 100). Compiles clean with
 on a course grade, and boundary grades of exactly 0 and 100 (avg computed
 correctly as 50.00). Re-confirmed Part 1's own invalid-input rejections
 (bad ID, blank name) still work unchanged.
+
+## Part 3 (2026-09-16) — Academic standing classification
+
+**Requirements:** Continue all Part 1 and Part 2 functionality. Validate the
+GPA before determining academic standing, reject GPAs outside 0.00–4.00 with
+an error and no standing, classify valid GPAs into Honors (3.50–4.00), Good
+Standing (2.00–3.49), Academic Probation (1.00–1.99), or Academic Suspension
+(0.00–0.99), and display the standing as part of the student report. Newly
+permitted this week: `switch` statements and logical operators. Still out of
+scope: functions, files, menus, multiple students, editing grades, automatic
+GPA calculation, degree audits, transcripts, dynamic memory. Loops are not on
+this part's permitted list either.
+
+**Implementation:** [main.c](main.c) — version bumped to 3.0. Added a named
+`enum AcademicStanding` with four constants. Classification is an if/else-if
+cascade on `currentGPA` placed immediately after the existing Part 1 range
+check, so validation still happens before any standing is determined. Display
+is a `switch` on the enum, printing the `Academic Standing :` line directly
+under `Current GPA` in the Student Summary. No loops, no functions.
+
+**Additive part — nothing from Parts 1 or 2 was rewritten.** The unrolled `if`
+comparisons for highest/lowest, the straight-line average, and the
+exit-on-invalid validation all stayed as they were, since loops and functions
+remain out of scope.
+
+**Stale file corrected before starting:** the root `main.c` and the Part 2
+snapshot had drifted apart. Both were 178 lines, but the root copy still
+printed the Student Summary *before* the course grade prompts, while the
+snapshot carried the Part 2 fix that moved it below (see Part 2's entry). The
+snapshot was 20 hours newer and correct. Copied the snapshot over the root
+`main.c` so Part 3 builds on the right base and the Part 2 formatting fix does
+not silently regress.
+
+**Why the `switch` tests the enum and not the GPA:** `switch (currentGPA)`
+does not compile — C requires an integer expression in a switch, and
+`currentGPA` is a `float`. The if/else cascade does the part a switch cannot
+do (compare a float against ranges) and reduces the GPA to one of four enum
+values; the switch then selects the label text. This also answers the spec's
+customer question about representing standing as predefined categories rather
+than loose text.
+
+**Assumptions logged (Part 3 newly requires an assumptions section in the
+submission PDF):**
+1. *Band gaps.* The published bands jump from 3.49 to 3.50 and from 1.99 to
+   2.00, leaving values like 3.495 unclassified. Implemented as a cascade of
+   `>=` lower bounds only, so every valid GPA in 0.00–4.00 lands in exactly
+   one category and the band limits are inclusive.
+2. *Kept the `Programmer:` line and `Welcome to SIMS` banner.* Part 3's worked
+   example omits both, but the Acceptance Criteria still requires all CCR-001
+   functionality to keep working, and CCR-001 required the banner. Same
+   judgment call made for Part 2 — Acceptance Criteria wins over the example.
+3. *Invalid GPA exits rather than re-prompting.* Customer questions 3 and 4
+   raise this; a retry needs a loop, which is out of scope. Kept the Part 1 /
+   Part 2 behavior.
+
+**Tests:** Compiles clean with `gcc -Wall -Wextra -std=c11` — zero warnings.
+All six required standing cases pass: 3.95 Honors, 3.20 Good Standing, 1.75
+Academic Probation, 0.60 Academic Suspension, -0.50 rejected, 4.25 rejected.
+Both rejections print the exact three-line message from the spec's Example 5
+and exit before requesting course grades. All three Part 2 regression cases
+still pass exactly — Alice Johnson (3.84, Honors, avg 91.60, high 100, low
+84), Michael Brown (2.91, Good Standing, avg 79.00, high 91, low 68),
+Christopher Williams (4.00, Honors, avg 100.00, high 100, low 100).
+Additionally spot-checked every band boundary and the gap value: 4.00 and 3.50
+Honors, 3.49 and 3.495 and 2.00 Good Standing, 1.99 and 1.00 Academic
+Probation, 0.99 and 0.00 Academic Suspension.
+
+**Bug found during testing and corrected (2026-09-16):** the report printed the
+GPA with `%.2f` (rounded to two decimals) but classified using the raw
+unrounded value, so the two could contradict each other. Entering `1.999`
+printed `Current GPA : 2.00` alongside `Academic Standing : Academic
+Probation` — but 2.00 is Good Standing. The display rounded up across the band
+edge and the classification did not follow. Fixed by rounding once into
+`gpaRounded` (`((int)(currentGPA * 100.0f + 0.5f)) / 100.0f`, the same cast
+technique already used for the Part 2 average) and using that single variable
+for both classification and display, so the printed GPA and the printed
+standing cannot disagree. Re-ran every test afterward: `1.999` now reports
+2.00 / Good Standing, and no required case or Part 2 regression case changed.
+Side effect, intentional: `3.495` now rounds to 3.50 and classifies as Honors,
+which is self-consistent with what it displays.
+
+**Deadline correction (2026-09-16):** the spec header says "Due Date: Beginning
+of Lesson 8," which under the lesson-to-date map previously recorded in the
+project `CLAUDE.md` would have been Thu Sep 24. Branson confirmed the real due
+date is **Thu Sep 17**, the same day as Part 2. The lesson map is therefore
+wrong and has been flagged in `CLAUDE.md` for correction from Canvas — future
+part deadlines should not be derived from it until it is fixed.
+
+**Submission package built:** `main.c` snapshot refreshed into
+`Part 3/Project 1 Part 3/`, evidence PDF written to the same folder
+(`Test Evidence, Bugs, Customer Questions and Assumptions.pdf`, 15 pages:
+intro and bug report, assumptions, the twelve customer questions, then one page
+per test for all nine tests). Submission ZIP built at
+`Part 3/Project 1 Part 3.zip` containing only `main.c` and the evidence PDF
+inside a `Project 1 Part 3/` wrapper folder, matching the Part 1 ZIP's
+structure. No compiled binary included.
+
+**Evidence PDF finalised (2026-09-16):** rebuilt using Branson's own terminal
+screenshots in place of rendered transcripts, with each test page labelled in
+the spec's exact wording (Input entered / Expected output / Actual output /
+Pass/Fail result). 14 pages, nine screenshots, all verified against the
+program's real output. Submission ZIP rebuilt and re-audited from the
+extracted files.
+
+**Not yet done (user's to complete):** the Canvas upload and the git commit.

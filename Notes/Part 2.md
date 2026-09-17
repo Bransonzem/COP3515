@@ -18,6 +18,15 @@ Part 2's worked example omits the `Programmer:` line, but its Acceptance
 Criteria requires all Part 1 functionality to keep working. Decision: kept
 the line (Acceptance Criteria wins over the example).
 
+## Student Summary placement (fixed 2026-09-09)
+
+Originally the Student Summary printed right after GPA entry, which put the
+five grade prompts between the student info and the grade report. Acceptance
+Criteria requires student and grade information to be "displayed together,"
+and the worked example shows them as one block. Moved the summary block down
+so it prints after Course 5 is entered, immediately above Course Grades.
+Screenshots were retaken after this change.
+
 ## Invalid-input behavior (resolved 2026-09-09)
 
 Invalid input rejects with an error and exits — no retry loop, since loops
